@@ -1,0 +1,3 @@
+[submodule "node_modules/sockjs"]
+	path = node_modules/sockjs
+	url = https://github.com/sockjs/sockjs-node.git
