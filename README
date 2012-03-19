@@ -1,0 +1,18 @@
+SockJS-node Connection Example
+==============================
+
+To run this example, first install dependencies:
+
+    npm install sockjs
+    npm install faye-websocket
+    npm install node-static
+    npm install node-uuid
+    npm install util
+
+And run a server:
+
+    node server.js
+
+That will spawn an http server at http://127.0.0.1:9999/ which will
+serve both html (served from the current directory) and also SockJS
+server (under the [/connect](http://127.0.0.1:9999/connect) path).

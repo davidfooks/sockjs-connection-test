@@ -81,7 +81,7 @@ function upgrade_listener(req, res)
 server.addListener('request', static_directory_listener);
 server.addListener('upgrade', upgrade_listener);
 
-sockjs_echo.installHandlers(server, {prefix: '/echo'});
+sockjs_echo.installHandlers(server, {prefix: '/connect'});
 
 console.log(' [*] Listening on 0.0.0.0:9999');
 server.listen(9999, '0.0.0.0');
