@@ -50,7 +50,7 @@ function sockjs_connection(connection)
 
     function connection_close()
     {
-        var message = 'Disconnect from ' + connection.remoteAddress + ':' + connection.remotePort + ' with id? ' + connectionId;
+        var message = 'Disconnect from ' + connection.remoteAddress + ':' + connection.remotePort + ' with id ' + connectionId;
         console.log(message);
         delete connections[connectionId];
         publishMessage(message);
@@ -81,7 +81,7 @@ function upgrade_listener(req, res)
 server.addListener('request', static_directory_listener);
 server.addListener('upgrade', upgrade_listener);
 
-sockjs_echo.installHandlers(server, {prefix: '/connect'});
+sockjs_echo.installHandlers(server, {prefix: '/echo'});
 
 console.log(' [*] Listening on 0.0.0.0:9999');
 server.listen(9999, '0.0.0.0');
