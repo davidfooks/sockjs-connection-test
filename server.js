@@ -1,8 +1,21 @@
 /*global require: false */
 /*global __dirname: false */
 /*global console: false */
+/*global process: false */
 
-var http = require('http');
+var configFile;
+if (process.argv.length > 2)
+{
+    configFile = './config/' + process.argv[2] + '.js';
+}
+else
+{
+    configFile = './config/development.js';
+}
+var config = require(configFile);
+
+var httpProtocol;
+var webSocketProtocol;
 var sockjs = require('sockjs');
 var node_static = require('node-static');
 
@@ -10,7 +23,7 @@ var node_static = require('node-static');
 function do_nothing() {}
 
 var sockjs_opts = {
-    sockjs_url: "http://127.0.0.1:9999/sockjs-client.js",
+    sockjs_url: 'http://' + config.host + ':' + config.port + '/sockjs-client.js',
     log: do_nothing
 };
 
@@ -45,6 +58,7 @@ function sockjs_connection(connection)
 
     function connection_data(message)
     {
+        //console.log(message);
         publishMessage(message);
     }
 
@@ -66,7 +80,23 @@ sockjs_echo.on('connection', sockjs_connection);
 var static_directory = new node_static.Server(__dirname);
 
 // 3. Usual http stuff
-var server = http.createServer();
+var server;
+if (config.secure)
+{
+    var https = require('https');
+    var fs = require('fs');
+    var httpsOptions = {
+        key: fs.readFileSync(config.key),
+        cert: fs.readFileSync(config.cert),
+        ca: fs.readFileSync(config.ca)
+    };
+    server = https.createServer(httpsOptions);
+}
+else
+{
+    var http = require('http');
+    server = http.createServer();
+}
 
 function static_directory_listener(req, res)
 {
@@ -81,7 +111,7 @@ function upgrade_listener(req, res)
 server.addListener('request', static_directory_listener);
 server.addListener('upgrade', upgrade_listener);
 
-sockjs_echo.installHandlers(server, {prefix: '/echo'});
+sockjs_echo.installHandlers(server, {prefix: config.webSocketConnectionPrefix});
 
 console.log(' [*] Listening on 0.0.0.0:9999');
 server.listen(9999, '0.0.0.0');
